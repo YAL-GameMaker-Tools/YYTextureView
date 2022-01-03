@@ -1,0 +1,5 @@
+-cp src
+-js bin/script.js
+-D nodejs
+-main Main
+-dce full

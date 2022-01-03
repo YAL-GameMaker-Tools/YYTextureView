@@ -1,0 +1,213 @@
+body {
+	margin: 0;
+	--font: 15px sans-serif;
+}
+body, #main {
+	height: 100%;
+	height: 100vh;
+	box-sizing: border-box;
+}
+table {
+	width: 100%;
+	padding: 1px;
+}
+table td {
+	padding: 0;
+	box-sizing: border-box;
+	position: relative;
+}
+#main #nav-td, #main #code-td {
+	padding: 2px;
+}
+textarea {
+	width: 100%;
+	height: 100%;
+	resize: none;
+	box-sizing: border-box;
+	overflow-y: scroll;
+}
+.bottom {
+	height: calc(100vh - 30px);
+}
+#nav, #pan {
+	overflow: auto;
+	background: white;
+	box-sizing: border-box;
+	border: 1px solid #aaa;
+	height: calc(100vh - 34px);
+}
+#pan {
+	overflow: hidden;
+	cursor: move;
+	width: 100%;
+	position: relative;
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABCSURBVFhH7c4hEQAgEABB2lGCBMRAUIl4T4E3zAvMijOntvWxotLcpxQAAAAAAADAf0A2X8pQLwEAAAAAAAB8Bqy4mHeUiBSSWmgAAAAASUVORK5CYIIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==);
+}
+#pan #pan-ctr {
+	transform-origin: left top 0px;
+	position: absolute;
+}
+#pan #pan-under {
+	opacity: 0.25;
+}
+#pan img {
+	transform-origin: left top 0px;
+	position: absolute;
+}
+#pan.zoomed img {
+	-ms-interpolation-mode: nearest-neighbor;
+	image-rendering: optimizeSpeed;
+	image-rendering: -moz-crisp-edges;
+	image-rendering: -webkit-optimize-contrast;
+	image-rendering: -o-crisp-edges;
+	image-rendering: pixelated;
+}
+#pan-notes div {
+	outline: 1px solid red;
+	outline: var(--rpx-size) solid red;
+	font-size: calc(var(--rpx-size) * 16);
+	position: absolute;
+	color: white;
+}
+#pan-notes div:after {
+	content: attr(data-index);
+	position: absolute;
+	top: 100%;
+	background: rgba(0, 0, 0, 0.7);
+	padding: 0 0.2em;
+	z-index: 1;
+	pointer-events: none;
+}
+#pan-notes div:hover:before {
+	content: attr(data-info);
+	position: absolute;
+	top: -1em;
+	background: rgba(0, 0, 0, 0.7);
+	padding: 0 0.2em;
+	z-index: 2;
+	pointer-events: none;
+	min-width: calc(var(--rpx-size) * 32);
+}
+#pan::after {
+	content: attr(data-zoom);
+	color: white;
+	display: inline-block;
+	padding: 1px 2px;
+	background: rgba(0, 0, 0, 0.4);
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+#nav a {
+	display: block;
+	line-height: 1.25;
+	color: black;
+	text-decoration: none;
+	padding-left: 4px;
+	word-break: break-all;
+}
+#nav #nav-current {
+	background: #007BDF;
+	color: white;
+}
+#nav a:hover {
+	background: #E5F3FF;
+}
+#nav-td .top {
+	position: relative;
+	overflow: inherit;
+}
+#nav-td .top input {
+	width: 50px;
+	margin-right: 2px;
+}
+#menu {
+	top: 100%;
+	top: calc(100% + 2px);
+	margin-top: 1px;
+	z-index: 1000;
+	position: absolute;
+	border: 1px solid #BABABA;
+	background: #fdfdfd;
+	white-space: nowrap;
+	color: black;
+	box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+	list-style: none;
+	margin: 0;
+	padding: 2px 0;
+	font: 9pt "Segoe UI", sans-serif;
+}
+#menu li {
+	padding: 4px 20px;
+	cursor: default;
+	position: relative;
+}
+#menu .menu-separator {
+	background: #E9E9E9;
+	height: 1px;
+	padding: 0;
+	margin: 5px 1px;
+}
+#menu li:not([disabled]):not(.menu-separator):hover {
+	background: #EBEBEB;
+}
+#menu li > div {
+	position: absolute;
+	left: calc(100% + 0.75em);
+	top: 0;
+	/*max-width: 10em;
+	white-space: normal;*/
+	background: rgba(0, 0, 0, 0.7);
+	padding: 0.3em 0.5em;
+	color: white;
+	pointer-events:none;
+}
+#menu li:not(:hover) div {
+	display: none;
+}
+#menu li > div:before {
+	position: absolute;
+	left: -1em;
+	top: 0.5em;
+	content: "";
+	border: 0.5em solid transparent;
+	border-right-color: rgba(0, 0, 0, 0.7);
+}
+#menu li > div p {
+	margin: 0;
+}
+#menu li > div p + p {
+	margin-top: 0.5em;
+}
+
+#filename {
+	width: calc(100% - 54px);
+	display: inline-block;
+	text-overflow: clip;
+	white-space: pre;
+}
+.top label {
+	vertical-align: middle;
+	line-height: 23px;
+}
+#status.error {
+	color: #fa3232;
+}
+.hidden {
+	visibility: hidden;
+	overflow: hidden;
+	height: 0;
+}
+
+#messagebox {
+	position: absolute;
+	left: 0; right: 0;
+	top: 0; bottom: 0;
+	margin: auto auto;
+	width: 400px;
+	height: 120px;
+	background: white;
+	box-sizing: border-box;
+	border: 1px solid #999;
+	box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+}
