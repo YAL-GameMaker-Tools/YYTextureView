@@ -1,4 +1,5 @@
 package assets;
+import YyTexture.YyTextureFormat;
 import haxe.ds.Vector;
 
 /**
@@ -18,15 +19,23 @@ class YySprite extends YyAsset {
 		name = file.readRefAString();
 		width = file.readInt32();
 		height = file.readInt32();
-		file.position += 4 * 9;
+		file.position += 4 * 9; // bbox, transparent, smooth, preload, sepmasks?
 		xoffset = file.readInt32();
 		yoffset = file.readInt32();
 		var imageNum = file.readInt32();
 		if (file.v2) {
-			file.readInt32(); // version
+			var sprVersion = file.readInt32(); // version
 			var type = file.readInt32();
 			file.readInt32(); // playback speed (f32)
 			file.readInt32(); // playback speed type
+			//
+			if (sprVersion >= 2) {
+				file.readInt32(); // sequences data address
+				if (sprVersion >= 3) {
+					file.readInt32(); // 9slice data address
+				}
+			}
+			//
 			if (type == 0) {
 				imageNum = file.readInt32();
 			} else imageNum = 0;
