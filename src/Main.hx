@@ -1,5 +1,6 @@
 package;
 
+import YyTexture.YyTextureFormat;
 import assets.*;
 import haxe.ds.Vector;
 import haxe.io.Bytes;
@@ -105,6 +106,7 @@ class Main {
 	}
 	
 	static function replaceTexture(files:FileList) {
+		//
 		for (file in files) {
 			var reader = new FileReader();
 			reader.onloadend = function(_) {
@@ -133,8 +135,9 @@ class Main {
 		show(
 			'${pannerImage.width}x${pannerImage.height} &middot; ' +
 			'${thousands(current.size)} bytes &middot; ' +
+			'Image Format: ${YyTexture.texformat} &middot; ' +
 			'<a href="#" onclick="return saveTexture()">Save?</a> &middot; ' +
-			'<a href="#" onclick="document.getElementById(\'replacer\').click(); return false">Replace?</a>',
+			'<a href="#" onclick="${(YyTexture.texformat != YyTextureFormat.PNG) ? "return formatReplaceAlert()" : "document.getElementById(\'replacer\').click(); return false"}">Replace?</a>',
 		'', true);
 	}
 	
@@ -418,23 +421,35 @@ class Main {
 		SaveSprites.proc(input, true);
 		return false;
 	}
+
+	static function formatReplaceAlert() {
+		Browser.window.alert("We're sorry, replacing non-PNG texture pages is not possible with this tool, please consider 'UndertaleModTool' instead.");
+		return false;
+	}
 	
 	static function saveTexture() {
 		var link:AnchorElement = cast document.createElement("a");
 		var dl = current.name + ".png";
-		try {
-			var arr = UInt8Array.fromBytes(bytes, current.pos, current.size);
-			var blob = new Blob([cast arr], { type: "image/png" });
-			//
-			var nav:Dynamic = Browser.navigator;
-			if (nav.msSaveBlob != null) {
-				nav.msSaveBlob(blob, dl);
-				return false;
+		if (YyTexture.texformat == YyTextureFormat.PNG) {
+			try {
+				var arr = UInt8Array.fromBytes(bytes, current.pos, current.size);
+				var blob = new Blob([cast arr], { type: "image/png" });
+				//
+				var nav:Dynamic = Browser.navigator;
+				if (nav.msSaveBlob != null) {
+					nav.msSaveBlob(blob, dl);
+					return false;
+				}
+				//
+				link.href = js.html.URL.createObjectURL(blob);
+			} catch (_:Dynamic) {
+				link.href = "data:image/png;base64," + current.base64;
 			}
-			//
-			link.href = js.html.URL.createObjectURL(blob);
-		} catch (_:Dynamic) {
-			link.href = "data:image/png;base64," + current.base64;
+		}
+		else {
+			Browser.window.console.log("Saving a non-png texture via base64...");
+			// should use cached base64 if present...
+			link.href = current.getBase64(current.file, true);
 		}
 		save_1(link, dl);
 		return false;
@@ -479,6 +494,7 @@ class Main {
 	static function main() {
 		Reflect.setField(Browser.window, "showTexture", showTexture);
 		Reflect.setField(Browser.window, "saveTexture", saveTexture);
+		Reflect.setField(Browser.window, "formatReplaceAlert", formatReplaceAlert);
 		Reflect.setField(Browser.window, "showSprite", showSprite);
 		var doc = Browser.document;
 		var body = doc.body;
